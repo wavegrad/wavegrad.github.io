@@ -1,10 +1,9 @@
-<!-- saved from url=(0126)https://google.github.io/tacotron/publications/semisupervised_generative_modeling_for_controllable_speech_synthesis/index.html -->
 <html>
    <head>
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-      <title>Audio samples from "WaveGrad: Estimating Gradients for Waveform Generation"</title>
-      <link rel="stylesheet" href="stylesheet.css">
-      <link rel="shortcut icon" href="https://google.github.io/tacotron/images/taco.png">
+      <title>WaveGrad: Estimating Gradients for Waveform Generation</title>
+      <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
+      <!-- <link rel="shortcut icon" href="../../images/taco.png"> -->
       <script>
          function play(path) {{
            var player = document.getElementById('player');
@@ -12,7 +11,6 @@
            player.play();
          }}
       </script>
-      <link rel="stylesheet" href="all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
       <style>
          .audio-cell {
          /* Center audio widgets in the table cell. */
@@ -71,14 +69,12 @@
       </style>
    </head>
    <body>
-      <article>
+     <div class="main">
+       <article>
          <header>
-            <h1>Audio samples from "WaveGrad: Estimating Gradients for Waveform Generation"</h1>
+            <h1>WaveGrad: Estimating Gradients for Waveform Generation [<a href="https://arxiv.org/abs/2009.00713">pdf</a>]</h1>
          </header>
       </article>
-      <div>
-         <p><b>Paper:</b> <a href="https://arxiv.org/abs/2009.00713">arXiv</a></p>
-      </div>
       <div>
          <p><b>Authors:</b> Nanxin Chen, Yu Zhang, Heiga Zen, Ron J. Weiss, Mohammad Norouzi, William Chan</p>
       </div>
@@ -90,36 +86,19 @@
         It can use as few as 6 iterations to generate high fidelity audio samples.
         WaveGrad is simple to train, and implicitly optimizes for the weighted variational lower-bound of the log-likelihood.
         Empirical experiments reveal WaveGrad to generate high fidelity audio samples matching a strong likelihood-based autoregressive baseline with less sequential operations.</a></p>
-      <div>
-            <b>Note:</b>
-            <span style="background-color: #FFFF00">To obtain the best quality, we strongly recommend readers to listen to the audio samples with headphones.</span>
-      </div>
-      <p class="toc_title">Contents</p>
-      <div id="toc_container">
-         <ul>
-           <li><a href="http://<FIXME>/wavegrad.htm#visualization"> Visualization
-               </a>
-            </li>
-            <li><a href="http://<FIXME>/wavegrad.htm#continuous"> Conditioned on continuous noise levels
-               </a>
-            </li>
-            <li><a href="http://<FIXME>/wavegrad.htm#discrete"> Conditioned on discrete index
-              </a>
-           </li>
-         </ul>
-      </div>
-      <a name="visualization">
-        <p class="toc_title">Visualization</p>
-      </a>
+      <h3>
+        Illustration of WaveGrad's waveform generation in only 6 refinement iterations:
+      </h3>
       <p>
-        6 iterations generation:
+	Text: <span class="text_e2e">Here are the match lineups for the Colombia Haiti match.</span>
       </p>
-      <hr>
-      <p style="color:red;"><b>Warning: white noise. Reduce the volume for the first three examples.</b></p>
+      <!-- WaveGrad outputs with <i>6 refinement steps:</i>      -->
+      <p style="color:red;"><b></b></p>
       <table>
         <tbody>
           <tr>
-            <td> <p style="color:red;"><b>n=0</b></p> </td>
+	    <!-- style="color:red;" -->
+            <td> <p>n=0</p> </td>
             <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
             <td> <img src="imgs/fig1_wav0.png" width="300px"> </td>
             <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -132,7 +111,7 @@
             </td>
           </tr>
           <tr>
-            <td> <p style="color:red;"><b>n=1</b></p> </td>
+            <td> <p>n=1</p> </td>
             <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
             <td> <img src="imgs/fig1_wav1.png" width="300px"> </td>
             <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -145,7 +124,7 @@
             </td>
           </tr>
           <tr>
-            <td> <p style="color:red;"><b>n=2</b></p> </td>
+            <td> <p>n=2</p> </td>
             <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
             <td> <img src="imgs/fig1_wav2.png" width="300px"> </td>
             <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -212,26 +191,41 @@
         </tbody>
       </table>
       <p>
-        50 iterations generation:
+        <b>Note:</b>  <span>To obtain the best audio quality, listen with headphones.</span>
+	Consider reducing the volume for the first few iterations above as they are mostly white noise.
+	 <!-- style="background-color: #FFFF00" -->
       </p>
-      <hr>
-      <img src="imgs/animation.gif" width="1100px" class="center">
-      <a name="continuous">
-         <h2>Continuous Noise Levels</h2>
-      </a>
+      <h3>
+        Illustration of WaveGrad's waveform generation in 50 refinement iterations:
+      </h3>
+      <img src="imgs/animation.gif" width="800px" class="center">
+      <br/>
+      <!-- <p class="toc_title">Contents</p> -->
+      <!-- <div id="toc_container"> -->
+      <!--    <ul> -->
+      <!--      <li><a href="#visualization"> Visualization -->
+      <!--          </a> -->
+      <!--       </li> -->
+      <!--       <li><a href="#continuous"> WaveGrad conditioned on the noise level -->
+      <!--          </a> -->
+      <!--       </li> -->
+      <!--       <li><a href="#discrete"> WaveGrad conditioned on a discrete iteration index -->
+      <!--         </a> -->
+      <!--      </li> -->
+      <!--    </ul> -->
+      <!-- </div> -->
+      <h3>Samples from WaveGrad conditioned on a continuous scalar indicative of the noise level:</h3>
       <p>
-         In this section, we demonstrate the audio samples from WaveGrad model conditioned on noise levels.<br>
-         During training, only <b>one model</b> is trained.<br>
-         Different lines correspond to different inference schedules.
+         <b>Note:</b> <!-- In this section, we demonstrate the audio samples from WaveGrad model conditioned on noise levels.<br> -->
+         Only a single model is trained. Different rows correspond to different iterative refinement schedules for inference.
       </p>
-      <hr>
 <table>
          <tbody>
             <tr>
                <td nowrap> Text </td>
                <td><span class="text_e2e">Weekends at twenty three fifty.</span></td>
                <td><span class="text_e2e">Here are the match lineups for the <br> Colombia Haiti match.</span></td>
-               <td><span class="text_e2e">On Friday night in Bridgeport expect a temperature <br> of minus four degrees Fahrenheit.</span></td>
+               <td><span class="text_e2e">On Friday night in Bridgeport expect a temperature of minus four degrees Fahrenheit.</span></td>
             </tr>
             <tr>
                <td nowrap>Reference</td>
@@ -252,7 +246,7 @@
                </td>
             </tr>
             <tr>
-               <td nowrap>WaveGrad Base(Linear 1000)</td>
+               <td nowrap>WaveGrad Base (Linear 1000)</td>
                <td>
                   <audio controls="">
                      <source src="wavs/C1000_1.wav">
@@ -270,7 +264,7 @@
                </td>
             </tr>
             <tr>
-               <td nowrap>WaveGrad Base(Linear 50):
+               <td nowrap>WaveGrad Base (Linear 50):
                <td>
                   <audio controls="">
                      <source src="wavs/C50_1.wav">
@@ -288,7 +282,7 @@
                </td>
             </tr>
             <tr>
-               <td nowrap>WaveGrad Base(Fib 25):
+               <td nowrap>WaveGrad Base (Fib 25):
                <td>
                   <audio controls="">
                      <source src="wavs/C25_1.wav">
@@ -306,7 +300,7 @@
                </td>
             </tr>
             <tr>
-               <td nowrap>WaveGrad Base(Manual 6):
+               <td nowrap>WaveGrad Base (Manual 6):
                <td>
                   <audio controls="">
                      <source src="wavs/C6_1.wav">
@@ -325,21 +319,19 @@
             </tr>
          </tbody>
       </table>
-      <a name="discrete">
-         <h2>Discrete indices</h2>
-      </a>
+
+      <h3>Samples from WaveGrad conditioned on a discrete iteration index:</h3>
       <p>
-         In this section, we demonstrate the audio samples from models conditioned on discrete indices.<br>
-         Each line corresponds to one individual model.
+         <b>Note:</b> <!-- In this section, we demonstrate the audio samples from models conditioned on discrete indices.<br> -->
+         Each row corresponds to an individual model that is trained with a particular iterative refinement scheudle in mind.
       </p>
-      <hr>
 <table>
          <tbody>
             <tr>
                <td nowrap> Text </td>
                <td><span class="text_e2e">Weekends at twenty three fifty.</span></td>
                <td><span class="text_e2e">Here are the match lineups for the <br> Colombia Haiti match.</span></td>
-               <td><span class="text_e2e">On Friday night in Bridgeport expect a temperature <br> of minus four degrees Fahrenheit.</span></td>
+               <td><span class="text_e2e">On Friday night in Bridgeport expect a temperature of minus four degrees Fahrenheit.</span></td>
             </tr>
             <tr>
                <td nowrap>Reference</td>
@@ -360,7 +352,7 @@
                </td>
             </tr>
             <tr>
-               <td nowrap>WaveGrad Base(Linear 1000)</td>
+               <td nowrap>WaveGrad Base (Linear 1000)</td>
                <td>
                   <audio controls="">
                      <source src="wavs/D1000_1.wav">
@@ -378,7 +370,7 @@
                </td>
             </tr>
             <tr>
-               <td nowrap>WaveGrad Base(Linear 50):
+               <td nowrap>WaveGrad Base (Linear 50):
                <td>
                   <audio controls="">
                      <source src="wavs/D50_1.wav">
@@ -396,7 +388,7 @@
                </td>
             </tr>
             <tr>
-               <td nowrap>WaveGrad Base(Fib 25):
+               <td nowrap>WaveGrad Base (Fib 25):
                <td>
                   <audio controls="">
                      <source src="wavs/D25_1.wav">
@@ -415,5 +407,6 @@
             </tr>
          </tbody>
       </table>
+     </div>
    </body>
 </html>
