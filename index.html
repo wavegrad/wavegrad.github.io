@@ -76,16 +76,29 @@
          </header>
       </article>
       <div>
-         <p><a href="https://scholar.google.com.hk/citations?user=4iFb9qYAAAAJ&hl=zh-CN">Nanxin Chen</a>, <a href="https://research.google/people/105680/">Yu Zhang</a>, <a href="https://research.google/people/HeigaZen/">Heiga Zen</a>, <a href="http://ronw.net/">Ron J. Weiss</a>, <a href="http://norouzi.github.io">Mohammad Norouzi</a>, <a href="http://williamchan.ca/">William Chan</a>, <b>ICLR 2021</b></p>
+        <p><a href="https://scholar.google.com/citations?user=4iFb9qYAAAAJ&hl=en">Nanxin Chen</a>,
+	  <a href="https://research.google/people/105680/">Yu Zhang</a>,
+	  <a href="https://research.google/people/HeigaZen/">Heiga Zen</a>,
+	  <a href="http://ronw.net/">Ron J. Weiss</a>, <a href="http://norouzi.github.io">Mohammad Norouzi</a>,
+	  <a href="http://williamchan.ca/">William Chan</a>, <b>ICLR 2021</b></p>
       </div>
       <div>
-      <p><b>Abstract:</b> This paper introduces WaveGrad, a conditional model for waveform generation through estimating gradients of the data density.
-        This model is built on the prior work on score matching and diffusion probabilistic models.
-        It starts from Gaussian white noise and iteratively refines the signal via a gradient-based sampler conditioned on the mel-spectrogram.
-        WaveGrad is non-autoregressive, and requires only a constant number of generation steps during inference.
-        It can use as few as 6 iterations to generate high fidelity audio samples.
-        WaveGrad is simple to train, and implicitly optimizes for the weighted variational lower-bound of the log-likelihood.
-        Empirical experiments reveal WaveGrad to generate high fidelity audio samples matching a strong likelihood-based autoregressive baseline with less sequential operations.</a></p>
+      <p><b>Abstract:</b> This paper introduces WaveGrad, a
+        conditional model for waveform generation through estimating
+        gradients of the data density.  This model is built on the
+        prior work on score matching and diffusion probabilistic
+        models.  It starts from Gaussian white noise and iteratively
+        refines the signal via a gradient-based sampler conditioned on
+        the mel-spectrogram.  WaveGrad is non-autoregressive, and
+        requires only a constant number of generation steps during
+        inference.  It can use as few as 6 iterations to generate high
+        fidelity audio samples.  WaveGrad is simple to train, and
+        implicitly optimizes for the weighted variational lower-bound
+        of the log-likelihood.  Empirical experiments reveal WaveGrad
+        to generate high fidelity audio samples matching a strong
+        likelihood-based autoregressive baseline with less sequential
+        operations.
+      </p>
       <h3>
         Illustration of WaveGrad's waveform generation in only 6 refinement iterations:
       </h3>
