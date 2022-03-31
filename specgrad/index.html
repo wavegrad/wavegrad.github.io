@@ -1,0 +1,569 @@
+
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <title>SpecGrad: Diffusion Probabilistic Model based Neural Vocoder with Adaptive Noise Spectral Shaping</title>
+      <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
+      <!-- <link rel="shortcut icon" href="../../images/taco.png"> -->
+      <script>
+         function play(path) {{
+           var player = document.getElementById('player');
+           player.src = path;
+           player.play();
+         }}
+      </script>
+      <style>
+         .audio-cell {
+         /* Center audio widgets in the table cell. */
+         text-align: center;
+         padding-bottom: 1px;
+         padding-top: 1px;
+         }
+         .audio-cell-padded {
+         text-align: center;
+         padding-bottom: 10px;
+         padding-top: 10px;
+         }
+         .audio-header {
+         /* Don't wrap header text. */
+         white-space: nowrap;
+         /* Some breaking space between headers for readability. */
+         padding-right: 5px;
+         padding-left: 5px;
+         }
+         .reference-cell {
+         /* For uniformity and to wrap long reference text, limit the reference cell's width. */
+         width: 25%;
+         padding-top: 20px;
+         padding-bottom: 20px;
+         }
+         .sample audio {
+         vertical-align: middle;
+         padding-left: 3px;
+         padding-right: 3px;
+         }
+         .round-button {
+         box-sizing: border-box;
+         display:block;
+         width:30px;
+         height:30px;
+         padding-top: 8px;
+         padding-left: 3px;
+         line-height: 6px;
+         border: 1.2px solid #000;
+         border-radius: 50%;
+         color: #000;
+         text-align:center;
+         background-color: rgba(0,0,0,0.00);
+         font-size:6px;
+         box-shadow: 0px 0px 2px rgba(0,0,0,1);
+         transition: all 0.2s ease;
+         }
+         .round-button:hover {
+         background-color: rgba(0,0,0,0.0);
+         box-shadow: 0px 0px 4px rgba(0,0,0,1);
+         }
+         .round-button:active {
+         background-color: rgba(0,0,0,0.01);
+         box-shadow: 0px 0px 1px rgba(0,0,0,1);
+         }
+      </style>
+   </head>
+   <body>
+     <div class="main">
+       <article>
+         <header>
+            <h1>SpecGrad: Diffusion Probabilistic Model based Neural Vocoder with Adaptive Noise Spectral Shaping</h1>
+         </header>
+      </article>
+      <div>
+        <p>
+		<a href="https://sites.google.com/site/yumakoizumiweb/profile-english">Yuma Koizumi</a>,
+	  	<a href="https://research.google/people/HeigaZen/">Heiga Zen</a>,
+	  	<a href="https://scholar.google.com/citations?user=dTORL1oAAAAJ&hl=en">Kohei Yatabe</a>,
+		<a href="https://scholar.google.com/citations?user=4iFb9qYAAAAJ&hl=en">Nanxin Chen</a>,
+	  	<a href="http://bacchiani.net/resume/resume.html">Michiel Bacchiani</a>
+		</p>
+      </div>
+      <div>
+      <p><b>Abstract:</b> Neural vocoder using denoising diffusion probabilistic model (DDPM) has been improved by adaptation of the diffusion noise distribution to given acoustic features. In this study, we propose <I>SpecGrad</I> that adapts the diffusion noise so that its time-varying spectral envelope becomes close to the conditioning log-mel spectrogram. This adaptation by time-varying filtering improves the sound quality especially in the high-frequency bands. It is processed in the time-frequency domain to keep the computational cost almost the same as the conventional DDPM-based neural vocoders. Experimental results showed that SpecGrad generates higher-fidelity speech waveform than conventional DDPM-based neural vocoders in both analysis-synthesis and speech enhancement scenarios.
+      </p>
+      <h3>
+        Contents:
+      </h3>
+      <p>
+  <a href="#animation">Comparison animation of WaveGrad, PriorGrad, and SpecGrad's waveform generation in 50 refinement iterations</a><br />
+  <a href="#analysis_synthesis">Analysis-synthesis examples of WaveGrad, PriorGrad, and SpecGrad</a><br>
+  <a href="#enhancement">Speech enhancement examples of WaveGrad, PriorGrad, and SpecGrad</a><br />
+  <a href="#references">References</a><br />
+      </p>
+      <h3 id="animation">Comparison animation of WaveGrad [1], PriorGrad [2], and SpecGrad's waveform generation in 50 refinement iterations:</h3>
+      <img src="data/comparison_small.gif" width="1200px" class="center">
+      <br/>
+
+
+         <h3 id="analysis_synthesis">Analysis-synthesis examples of WaveGrad [1], PriorGrad [2], and SpecGrad:</h3>
+         <p>
+         <table>
+            <tbody>
+    <b>Example 1: </b> <I>I can't speak for Scooby, but have you looked in the Mystery Machine?</I> <br />
+    <audio controls=""><source src="data/0_gt.wav"></audio>
+    <tr>
+        <th align="center"></th>
+        <td align="center"> Initial noise<br />
+        </td>
+        <td align="center"> 3 iterations with WG-3 schedule<br />
+        </td>
+        <td align="center"> 6 iterations with WG-6 schedule<br />
+        </td>
+        <td align="center"> 50 iterations with WG-50 schedule<br />
+        </td>
+    </tr>
+    <tr>
+        <th align="center">WaveGrad</th>
+        <td align="center"> 
+           <audio controls=""><source src="data/0_wg_init.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/0_wg_iter3.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/0_wg_iter6.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/0_wg_iter0.wav"></audio>
+        </td>
+    </tr>
+    <tr>
+        <th align="center">PriorGrad</th>
+        <td align="center"> 
+          <audio controls=""><source src="data/0_pg_init.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/0_pg_iter3.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/0_pg_iter6.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/0_pg_iter0.wav"></audio>
+        </td>
+    </tr>
+    <tr>
+        <th align="center">SpecGrad</th>
+        <td align="center"> 
+          <audio controls=""><source src="data/0_sg_init.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/0_sg_iter3.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/0_sg_iter6.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/0_sg_iter0.wav"></audio>
+        </td>
+    </tr>
+            </tbody>
+         </table><br />
+         <table>
+            <tbody>
+    <b>Example 2: </b> <I>The dreaded, head pounding, body aching, feverish, nauseating, cough fest packs equal parts misery and inconvenience.</I> <br />
+    <audio controls=""><source src="data/1_gt.wav"></audio>
+    <tr>
+        <th align="center"></th>
+        <td align="center"> Initial noise<br />
+        </td>
+        <td align="center"> 3 iterations with WG-3 schedule<br />
+        </td>
+        <td align="center"> 6 iterations with WG-6 schedule<br />
+        </td>
+        <td align="center"> 50 iterations with WG-50 schedule<br />
+        </td>
+    </tr>
+    <tr>
+        <th align="center">WaveGrad</th>
+        <td align="center"> 
+          <audio controls=""><source src="data/1_wg_init.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/1_wg_iter3.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/1_wg_iter6.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/1_wg_iter0.wav"></audio>
+        </td>
+    </tr>
+    <tr>
+        <th align="center">PriorGrad</th>
+        <td align="center"> 
+          <audio controls=""><source src="data/1_pg_init.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/1_pg_iter3.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/1_pg_iter6.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/1_pg_iter0.wav"></audio>
+        </td>
+    </tr>
+    <tr>
+        <th align="center">SpecGrad</th>
+        <td align="center"> 
+          <audio controls=""><source src="data/1_sg_init.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/1_sg_iter3.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/1_sg_iter6.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/1_sg_iter0.wav"></audio>
+        </td>
+    </tr>
+            </tbody>
+         </table><br />
+         <table>
+            <tbody>
+    <b>Example 3: </b> <I>If done right, it will also create jobs.</I> <br />
+    <audio controls=""><source src="data/2_gt.wav"></audio>
+    <tr>
+        <th align="center"></th>
+        <td align="center"> Initial noise<br />
+        </td>
+        <td align="center"> 3 iterations with WG-3 schedule<br />
+        </td>
+        <td align="center"> 6 iterations with WG-6 schedule<br />
+        </td>
+        <td align="center"> 50 iterations with WG-50 schedule<br />
+        </td>
+    </tr>
+    <tr>
+        <th align="center">WaveGrad</th>
+        <td align="center"> 
+          <audio controls=""><source src="data/2_wg_init.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/2_wg_iter3.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/2_wg_iter6.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/2_wg_iter0.wav"></audio>
+        </td>
+    </tr>
+    <tr>
+        <th align="center">PriorGrad</th>
+        <td align="center"> 
+          <audio controls=""><source src="data/2_pg_init.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/2_pg_iter3.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/2_pg_iter6.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/2_pg_iter0.wav"></audio>
+        </td>
+    </tr>
+    <tr>
+        <th align="center">SpecGrad</th>
+        <td align="center"> 
+          <audio controls=""><source src="data/2_sg_init.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/2_sg_iter3.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/2_sg_iter6.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/2_sg_iter0.wav"></audio>
+        </td>
+    </tr>
+            </tbody>
+         </table><br />
+
+         <table>
+            <tbody>
+    <b>Example 4: </b> <I>There are many talented actors in the world.</I> <br />
+    <audio controls=""><source src="data/3_gt.wav"></audio>
+    <tr>
+        <th align="center"></th>
+        <td align="center"> Initial noise<br />
+        </td>
+        <td align="center"> 3 iterations with WG-3 schedule<br />
+        </td>
+        <td align="center"> 6 iterations with WG-6 schedule<br />
+        </td>
+        <td align="center"> 50 iterations with WG-50 schedule<br />
+        </td>
+    </tr>
+    <tr>
+        <th align="center">WaveGrad</th>
+        <td align="center"> 
+          <audio controls=""><source src="data/3_wg_init.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/3_wg_iter3.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/3_wg_iter6.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/3_wg_iter0.wav"></audio>
+        </td>
+    </tr>
+    <tr>
+        <th align="center">PriorGrad</th>
+        <td align="center"> 
+          <audio controls=""><source src="data/3_pg_init.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/3_pg_iter3.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/3_pg_iter6.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/3_pg_iter0.wav"></audio>
+        </td>
+    </tr>
+    <tr>
+        <th align="center">SpecGrad</th>
+        <td align="center"> 
+          <audio controls=""><source src="data/3_sg_init.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/3_sg_iter3.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/3_sg_iter6.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/3_sg_iter0.wav"></audio>
+        </td>
+    </tr>
+            </tbody>
+         </table><br />
+
+         <table>
+            <tbody>
+    <b>Example 5: </b> <I>Nine hundred kilowatts times twenty four is a lot of watts.</I> <br />
+    <audio controls=""><source src="data/4_gt.wav"></audio>
+    <tr>
+        <th align="center"></th>
+        <td align="center"> Initial noise<br />
+        </td>
+        <td align="center"> 3 iterations with WG-3 schedule<br />
+        </td>
+        <td align="center"> 6 iterations with WG-6 schedule<br />
+        </td>
+        <td align="center"> 50 iterations with WG-50 schedule<br />
+        </td>
+    </tr>
+    <tr>
+        <th align="center">WaveGrad</th>
+        <td align="center"> 
+          <audio controls=""><source src="data/4_wg_init.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/4_wg_iter3.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/4_wg_iter6.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/4_wg_iter0.wav"></audio>
+        </td>
+    </tr>
+    <tr>
+        <th align="center">PriorGrad</th>
+        <td align="center"> 
+          <audio controls=""><source src="data/4_pg_init.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/4_pg_iter3.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/4_pg_iter6.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/4_pg_iter0.wav"></audio>
+        </td>
+    </tr>
+    <tr>
+        <th align="center">SpecGrad</th>
+        <td align="center"> 
+          <audio controls=""><source src="data/4_sg_init.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/4_sg_iter3.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/4_sg_iter6.wav"></audio>
+        </td>
+        <td align="center"> 
+          <audio controls=""><source src="data/4_sg_iter0.wav"></audio>
+        </td>
+    </tr>
+            </tbody>
+         </table><br />
+         </p>
+
+
+
+         <h3 id="enhancement">Speech enhancement examples of WaveGrad [1], PriorGrad [2], and SpecGrad:</h3>
+         <p>
+  <table>
+    <b>Example 1: </b> <I>I can't speak for Scooby, but have you looked in the Mystery Machine?</I> <br />
+    <tr>
+        <td align="center"> Noisy input <br />
+          <img src="data/0_wg_noisy.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/0_wg_noisy.wav"></audio>
+        </td>
+        <td align="center"> Ground-truth <br />
+          <img src="data/0_wg_clean.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/0_wg_clean.wav"></audio>
+        </td>
+    </tr>
+    <tr>
+        <td align="center"> WaveGrad <br />
+          <img src="data/0_wg_output.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/0_wg_output.wav"></audio>
+        </td>
+        <td align="center"> PriorGrad <br />
+          <img src="data/0_pg_output.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/0_pg_output.wav"></audio>
+        </td>
+        <td align="center"> SpecGrad <br />
+          <img src="data/0_sg_output.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/0_sg_output.wav"></audio>
+        </td>
+    </tr>
+  </table><br />
+  <table>
+    <b>Example 2: </b> <I>The dreaded, head pounding, body aching, feverish, nauseating, cough fest packs equal parts misery and inconvenience.</I> <br />
+    <tr>
+        <td align="center"> Noisy input <br />
+          <img src="data/1_wg_noisy.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/1_wg_noisy.wav"></audio>
+        </td>
+        <td align="center"> Ground-truth <br />
+          <img src="data/1_wg_clean.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/1_wg_clean.wav"></audio>
+        </td>
+    </tr>
+    <tr>
+        <td align="center"> WaveGrad <br />
+          <img src="data/1_wg_output.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/1_wg_output.wav"></audio>
+        </td>
+        <td align="center"> PriorGrad <br />
+          <img src="data/1_pg_output.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/1_pg_output.wav"></audio>
+        </td>
+        <td align="center"> SpecGrad <br />
+          <img src="data/1_sg_output.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/1_sg_output.wav"></audio>
+        </td>
+    </tr>
+  </table><br />
+  <table>
+    <b>Example 3: </b> <I>The new entity set about warping reality all over Scotland.</I> <br />
+    <tr>
+        <td align="center"> Noisy input <br />
+          <img src="data/2_wg_noisy.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/2_wg_noisy.wav"></audio>
+        </td>
+        <td align="center"> Ground-truth <br />
+          <img src="data/2_wg_clean.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/2_wg_clean.wav"></audio>
+        </td>
+    </tr>
+    <tr>
+        <td align="center"> WaveGrad <br />
+          <img src="data/2_wg_output.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/2_wg_output.wav"></audio>
+        </td>
+        <td align="center"> PriorGrad <br />
+          <img src="data/2_pg_output.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/2_pg_output.wav"></audio>
+        </td>
+        <td align="center"> SpecGrad <br />
+          <img src="data/2_sg_output.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/2_sg_output.wav"></audio>
+        </td>
+    </tr>
+  </table><br />
+  <table>
+    <b>Example 4: </b> <I>Okay, two forty p.m.</I> <br />
+    <tr>
+        <td align="center"> Noisy input <br />
+          <img src="data/3_wg_noisy.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/3_wg_noisy.wav"></audio>
+        </td>
+        <td align="center"> Ground-truth <br />
+          <img src="data/3_wg_clean.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/3_wg_clean.wav"></audio>
+        </td>
+    </tr>
+    <tr>
+        <td align="center"> WaveGrad <br />
+          <img src="data/3_wg_output.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/3_wg_output.wav"></audio>
+        </td>
+        <td align="center"> PriorGrad <br />
+          <img src="data/3_pg_output.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/3_pg_output.wav"></audio>
+        </td>
+        <td align="center"> SpecGrad <br />
+          <img src="data/3_sg_output.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/3_sg_output.wav"></audio>
+        </td>
+    </tr>
+  </table><br />
+  <table>
+    <b>Example 5: </b> <I>Aromatherapy. The use of aromatic plant extracts and essential oils in massage or baths.</I> <br />
+    <tr>
+        <td align="center"> Noisy input <br />
+          <img src="data/4_wg_noisy.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/4_wg_noisy.wav"></audio>
+        </td>
+        <td align="center"> Ground-truth <br />
+          <img src="data/4_wg_clean.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/4_wg_clean.wav"></audio>
+        </td>
+    </tr>
+    <tr>
+        <td align="center"> WaveGrad <br />
+          <img src="data/4_wg_output.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/4_wg_output.wav"></audio>
+        </td>
+        <td align="center"> PriorGrad <br />
+          <img src="data/4_pg_output.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/4_pg_output.wav"></audio>
+        </td>
+        <td align="center"> SpecGrad <br />
+          <img src="data/4_sg_output.png" width="300" alt=""/> <br />
+          <audio controls=""><source src="data/4_sg_output.wav"></audio>
+        </td>
+    </tr>
+  </table><br />
+         </p>
+
+  <h3 id="references">References:</h3>
+         <p>
+		[1] N. Chen, Y. Zhang, H. Zen, R. J. Weiss, M. Norouzi, and W. Chan,“WaveGrad:  Estimating gradients for waveform generation,”  in Proc. Int. Conf. Learn. Represent. (ICLR), 2021. [<a href="https://openreview.net/forum?id=NsMLjcFaO8O">paper</a>]<br/>
+		[2] S. Lee, H. Kim, C. Shin, X. Tan, C. Liu, Q. Meng, T. Qin, W. Chen, S. Yoon, and T.-Y. Liu, “PriorGrad: Improving conditional denoising diffusion models with data-dependent adaptive prior,” in Proc. Int. Conf. Learn. Represent. (ICLR), 2022. [<a href="https://openreview.net/forum?id=_BNiN4IjC5">paper</a>]<br/>
+         </p>
+      </div>
+   </body>
+</html>
